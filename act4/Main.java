@@ -1,38 +1,38 @@
-package main;
+package main.act4;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
+        ArrayList<Hebra> lista = new ArrayList<>();
+        ArrayList<Integer> resultados = new ArrayList<>();
+
         Scanner sc = new Scanner(System.in);
+        System.out.println("Indiqueme la ultima posicion que desea mostrar");
+        Integer max = 0;
+        try {
+            max = sc.nextInt();
 
-        ArrayList<Integer> lista_fibonacci = new ArrayList<>();
-        lista_fibonacci.add(1);
-        lista_fibonacci.add(1);
-
-        Hebra n_2 = new Hebra(null, 1, 1);
-        Hebra n_1 = new Hebra(n_2.getValor_actual(), 1, 2);
-        n_2 = n_1;
-        Hebra n = new Hebra(n_1.getValor_actual(), n_2.getValor_previo(), 3);
-
-
-        System.out.println("Indiqueme la posicion de Fibonnaci que desea calcular");
-        Integer max = sc.nextInt();
-
-        if (max == 1 || max == 2) {
-            if (max == 1) {
-                System.out.println(lista_fibonacci.get(0));
-            } else {
-                System.out.println(lista_fibonacci);
-            }
-        } else {
-
+        } catch (Exception e) {
+            System.out.println("Error al captar el numero");
+            System.exit(0);
         }
+
+
+        for (int i = 0; i < max; i++) {
+            try {
+                Hebra h = new Hebra(i, resultados);
+                h.start();
+                h.join();
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println("===========================================================");
+        System.out.println("La lista sucesion de fibonacci haste el termino: " + max + ". Es: ");
+        System.out.println(resultados);
+        System.out.println("============================================================");
     }
-
-
-}
-
-
 }

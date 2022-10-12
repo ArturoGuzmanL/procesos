@@ -1,55 +1,33 @@
-package main;
+package main.act4;
 
-public class Hebra extends Thread {
-    private Integer valor_1;
-    private Integer valor_2;
+import java.util.ArrayList;
+
+class Hebra extends Thread {
     private Integer posicion;
+    public Integer result;
 
-    private Integer valor;
+    ArrayList<Integer> resultados;
 
-    public void run(Integer max) {
-        Integer cont = 3;
-        while(cont<max){
-            Hebra n =new Hebra(valor_1, valor_2, cont);
-            cont++;
+    public Hebra(Integer posicion, ArrayList<Integer> resultados) {
+        this.posicion = posicion;
+        this.resultados = resultados;
+        if (posicion < 3) {
+            if (posicion == 0) {
+                result = 0;
+            } else {
+                result = 1;
+            }
         }
     }
 
-    Hebra(Hebra n_1, Hebra n_2, Integer posicion) {
-        this.valor_1 = n_1.getValor();
-        this.valor_2 = n_2.getValor_2();
-        this.posicion = posicion;
-    }
-
-    public Integer getValor() {
-        return valor;
-    }
-
-    public void setValor(Integer valor) {
-        this.valor = valor;
-    }
-
-    public Integer getValor_1() {
-        return valor_1;
-    }
-
-    public void setValor_1(Integer valor_1) {
-        this.valor_1 = valor_1;
-    }
-
-    public Integer getValor_2() {
-        return valor_2;
-    }
-
-    public void setValor_2(Integer valor_2) {
-        this.valor_2 = valor_2;
-    }
-
-    public Integer getPosicion() {
-        return posicion;
-    }
-
-    public void setPosicion(Integer posicion) {
-        this.posicion = posicion;
+    public void run() {
+        if (posicion < 3) {
+            resultados.add(result);
+        } else {
+            Integer n_1 = resultados.get(posicion - 1);
+            Integer n_2 = resultados.get(posicion - 2);
+            result = n_1 + n_2;
+            resultados.add(result);
+        }
     }
 }
