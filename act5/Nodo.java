@@ -20,27 +20,78 @@ public class Nodo extends Thread {
 
     static void mezcla(List<Integer> listado_1, List<Integer> listado_2) {
         lista.clear();
-        lista.addAll(listado_1);
-        lista.addAll(listado_2);
 
-        boolean sorted = false;
-        Integer temp;
-        while (!sorted) {
-            sorted = true;
-            for (int i = 0; i < lista.size()-1; i++) {
-                if (lista.get(i) > lista.get(i + 1)) {
-                    temp = lista.get(i);
-                    lista.set(i, lista.get(i + 1));
-                    lista.set(i + 1, temp);
-                    sorted = false;
-                }
+        while (!listado_1.isEmpty() && !listado_2.isEmpty()) {
+            AtomicReference<Integer> val1 = new AtomicReference<>(Integer.MAX_VALUE);
+            if (!listado_1.isEmpty()) {
+                listado_1.forEach(k -> {
+                    if (k <= val1.get()) {
+                        val1.set(k);
+                    }
+                });
+            }
+
+            AtomicReference<Integer> val2 = new AtomicReference<>(Integer.MAX_VALUE);
+
+            if (!listado_2.isEmpty()) {
+                listado_2.forEach(k -> {
+                    if (k <= val2.get()) {
+                        val2.set(k);
+                    }
+                });
+            }
+
+            if (val1.get() < val2.get()) {
+                lista.add(val1.get());
+                listado_1.remove(val1.get());
+
+            }
+            if (val1.get() > val2.get()) {
+                lista.add(val2.get());
+                listado_2.remove(val2.get());
+            }
+
+            if (Objects.equals(val1.get(), val2.get())) {
+                lista.add(val1.get());
+                lista.add(val2.get());
+                listado_1.remove(val1.get());
+                listado_2.remove(val2.get());
+            }
+        }
+
+        if (listado_1.isEmpty() && !listado_2.isEmpty()) {
+            AtomicReference<Integer> val = new AtomicReference<>(Integer.MAX_VALUE);
+            while (!listado_2.isEmpty()) {
+                listado_2.forEach(k -> {
+                    if (k < val.get()) {
+                        val.set(k);
+                    }
+                });
+                lista.add(val.get());
+                listado_2.remove(val.get());
+                val.set(Integer.MAX_VALUE);
+
+            }
+        }
+
+        if (!listado_1.isEmpty() && listado_2.isEmpty()) {
+            AtomicReference<Integer> val = new AtomicReference<>(Integer.MAX_VALUE);
+
+            while (!listado_1.isEmpty()) {
+                listado_1.forEach(k -> {
+                    if (k < val.get()) {
+                        val.set(k);
+                    }
+                });
+                lista.add(val.get());
+                listado_1.remove(val.get());
+                val.set(Integer.MAX_VALUE);
             }
         }
     }
 
     public void run() {
-        if (lista.size() <= 1)
-            return;
+        if (lista.size() <= 1) return;
 
         ArrayList<Integer> temp_1 = new ArrayList<>();
         ArrayList<Integer> temp_2 = new ArrayList<>();
@@ -51,10 +102,10 @@ public class Nodo extends Thread {
         Nodo a = new Nodo(temp_1);
         Nodo b = new Nodo(temp_2);
 
-        a.start();
-        b.start();
         try {
+            a.start();
             a.join();
+            b.start();
             b.join();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
