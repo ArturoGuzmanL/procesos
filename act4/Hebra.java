@@ -1,4 +1,4 @@
-package main.act4;
+package act4;
 
 import java.util.ArrayList;
 

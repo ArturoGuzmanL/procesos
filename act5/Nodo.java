@@ -2,67 +2,67 @@ package act5;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Nodo extends Thread {
     private static List<Integer> lista;
 
     public Nodo(List<Integer> lista) {
-        this.lista = lista;
+        Nodo.lista = lista;
     }
 
 
     // Añade a la lista [desde,hasta)
     static void añade(List<Integer> listado, Integer desde, Integer hasta) {
-        Integer cont = 0;
-
-        for (Integer i = 0; i < lista.size(); i++) {
-            if (i >= desde && i < hasta) {
-                lista.add(i, listado.get(cont));
-                cont++;
-            }
-        }
+        listado.addAll(lista.subList(desde, hasta));
     }
 
-    static void mezcla(List<Integer> lista, List<Integer> lista_2) {
-        ArrayList<Integer> lista_temp = new ArrayList<>();
-        Nodo n_1 = new Nodo(lista);
-        Nodo n_2 = new Nodo((lista_2));
+    static void mezcla(List<Integer> listado_1, List<Integer> listado_2) {
+        lista.clear();
+        lista.addAll(listado_1);
+        lista.addAll(listado_2);
 
-        // Ordenamos las listas
-
-        try {
-            n_1.start();
-            n_2.start();
-            n_1.join();
-            n_2.join();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        Integer max_size = null;
-
-        if (lista.size() >= lista_2.size()) {
-            max_size = lista.size();
-        } else {
-            max_size = lista_2.size();
-        }
-
-        for (Integer i = 0; i < max_size; i++) {
-            if (n_1.getLista().get(i) != null && n_2.getLista().get(i) != null) {
-
-            } else if (n_1.getLista().get(i) == null && n_2.getLista().get(i) != null) {
-
-            } else if (n_1.getLista().get(i) != null && n_2.getLista().get(i) == null) {
-
+        boolean sorted = false;
+        Integer temp;
+        while (!sorted) {
+            sorted = true;
+            for (int i = 0; i < lista.size()-1; i++) {
+                if (lista.get(i) > lista.get(i + 1)) {
+                    temp = lista.get(i);
+                    lista.set(i, lista.get(i + 1));
+                    lista.set(i + 1, temp);
+                    sorted = false;
+                }
             }
         }
-
     }
 
     public void run() {
+        if (lista.size() <= 1)
+            return;
 
+        ArrayList<Integer> temp_1 = new ArrayList<>();
+        ArrayList<Integer> temp_2 = new ArrayList<>();
+
+        añade(temp_1, 0, lista.size() / 2);
+        añade(temp_2, lista.size() / 2, lista.size());
+
+        Nodo a = new Nodo(temp_1);
+        Nodo b = new Nodo(temp_2);
+
+        a.start();
+        b.start();
+        try {
+            a.join();
+            b.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        mezcla(temp_1, temp_2);
     }
+
 
     public static List<Integer> getLista() {
         return lista;

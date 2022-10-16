@@ -1,10 +1,10 @@
-package main.act4;
+package act4;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         ArrayList<Hebra> lista = new ArrayList<>();
         ArrayList<Integer> resultados = new ArrayList<>();
 
